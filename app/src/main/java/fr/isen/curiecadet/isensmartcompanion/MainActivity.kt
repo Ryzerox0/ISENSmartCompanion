@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(bottomBar = { TabView(tabBarItems, navController) }) {
                         NavHost(navController = navController, startDestination = mainTab.title) {
                             composable(mainTab.title) {
-                                MainScreen ()
+                                MainScreen()
                             }
                             composable(eventsTab.title) {
                                 EventScreen()
@@ -102,6 +102,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     ISENSmartCompanionTheme {
-        MainScreen ()
+        MainScreen()
     }
 }

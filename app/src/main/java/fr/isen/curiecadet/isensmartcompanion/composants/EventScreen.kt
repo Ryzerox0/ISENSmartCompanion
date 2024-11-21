@@ -2,13 +2,17 @@ package fr.isen.curiecadet.isensmartcompanion.composants
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,13 +29,27 @@ fun EventScreen() {
 
 
     val events = listOf(
-        Event("Soirée BDE", "15 décembre 2024", "Rejoignez-nous pour une soirée festive avec des jeux et de la musique."),
-        Event("Gala de fin d'année", "20 décembre 2024", "Célébration de la fin de l'année avec un dîner et une soirée dansante."),
-        Event("Journée de cohésion", "10 janvier 2025", "Activités pour renforcer les liens entre les étudiants et le corps enseignant."),
+        Event(
+            "Soirée BDE",
+            "15 décembre 2024",
+            "Rejoignez-nous pour une soirée festive avec des jeux et de la musique."
+        ),
+        Event(
+            "Gala de fin d'année",
+            "20 décembre 2024",
+            "Célébration de la fin de l'année avec un dîner et une soirée dansante."
+        ),
+        Event(
+            "Journée de cohésion",
+            "10 janvier 2025",
+            "Activités pour renforcer les liens entre les étudiants et le corps enseignant."
+        ),
     )
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -51,14 +69,14 @@ fun EventScreen() {
 }
 
 @Composable
-fun EventCard(event: Event, context: Context =  LocalContext.current) {
+fun EventCard(event: Event, context: Context = LocalContext.current) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         shape = MaterialTheme.shapes.medium,
 
-    ) {
+        ) {
         Column(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.Start

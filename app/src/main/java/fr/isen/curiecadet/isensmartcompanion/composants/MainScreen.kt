@@ -2,7 +2,13 @@ package fr.isen.curiecadet.isensmartcompanion.composants
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -31,14 +37,23 @@ import java.util.Calendar
 // Définir la fonction getAssistantResponse en dehors de la composable
 fun getAssistantResponse(userInput: String): String {
     return when {
-        userInput.contains("bonjour", ignoreCase = true) -> "Assistant: Bonjour ! Comment puis-je vous aider ?"
+        userInput.contains(
+            "bonjour",
+            ignoreCase = true
+        ) -> "Assistant: Bonjour ! Comment puis-je vous aider ?"
+
         userInput.contains("heure", ignoreCase = true) -> {
             val calendar = Calendar.getInstance()
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
             "Assistant: Il est ${hour}:${minute}."
         }
-        userInput.contains("nom", ignoreCase = true) -> "Assistant: Je suis votre assistant intelligent !"
+
+        userInput.contains(
+            "nom",
+            ignoreCase = true
+        ) -> "Assistant: Je suis votre assistant intelligent !"
+
         else -> "Assistant: Merci de votre question, je vais chercher tout de suite."
     }
 }

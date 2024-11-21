@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +42,12 @@ class EventsDetailActivity : ComponentActivity() {
 }
 
 @Composable
-fun EventDetailScreen(eventName: String, eventDate: String, eventDescription: String, modifier: Modifier = Modifier) {
+fun EventDetailScreen(
+    eventName: String,
+    eventDate: String,
+    eventDescription: String,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier.padding(16.dp)) {
         Text(
             text = "Nom de l'événement: $eventName",
