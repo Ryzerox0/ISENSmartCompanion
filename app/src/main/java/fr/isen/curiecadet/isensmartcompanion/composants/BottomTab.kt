@@ -2,7 +2,6 @@ package fr.isen.curiecadet.isensmartcompanion.composants
 
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,7 +22,7 @@ fun TabView(tabBarItems: List<TabBarItem>, navController: NavController) {
     }
 
     NavigationBar {
-        // looping over each tab to generate the views and navigation for each item
+        // Boucle pour générer les vues et la navigation pour chaque élément
         tabBarItems.forEachIndexed { index, tabBarItem ->
             NavigationBarItem(
                 selected = selectedTabIndex == index,
@@ -40,12 +39,13 @@ fun TabView(tabBarItems: List<TabBarItem>, navController: NavController) {
                         badgeAmount = tabBarItem.badgeAmount
                     )
                 },
-                label = { Text(tabBarItem.title) })
+                label = { Text(tabBarItem.title) }
+            )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun TabBarIconView(
     isSelected: Boolean,
@@ -54,7 +54,13 @@ fun TabBarIconView(
     title: String,
     badgeAmount: Int? = null
 ) {
-    BadgedBox(badge = { TabBarBadgeView(badgeAmount) }) {
+    BadgedBox(badge = {
+        if (badgeAmount != null && badgeAmount > 0) {
+            Badge {
+                Text(badgeAmount.toString())
+            }
+        }
+    }) {
         Icon(
             imageVector = if (isSelected) {
                 selectedIcon
@@ -63,15 +69,5 @@ fun TabBarIconView(
             },
             contentDescription = title
         )
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun TabBarBadgeView(count: Int? = null) {
-    if (count != null) {
-        Badge {
-            Text(count.toString())
-        }
     }
 }

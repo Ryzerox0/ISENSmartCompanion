@@ -6,15 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -31,6 +26,7 @@ import fr.isen.curiecadet.isensmartcompanion.composants.MainScreen
 import fr.isen.curiecadet.isensmartcompanion.composants.TabView
 import fr.isen.curiecadet.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 
+
 data class TabBarItem(
     val title: String,
     val selectedIcon: ImageVector,
@@ -40,32 +36,33 @@ data class TabBarItem(
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 
+            // Utilisation des icônes intégrées de Jetpack Compose
             val mainTab = TabBarItem(
                 title = "main",
-                selectedIcon = Icons.Filled.Home,
-                unselectedIcon = Icons.Outlined.Home
+                selectedIcon = Icons.Filled.Home, // Icône maison pour l'état sélectionné
+                unselectedIcon = Icons.Filled.Home // Icône maison pour l'état non sélectionné
             )
             val eventsTab = TabBarItem(
                 title = "events",
-                selectedIcon = Icons.Filled.Notifications,
-                unselectedIcon = Icons.Outlined.Notifications
+                selectedIcon = Icons.Filled.Event, // Icône événement pour l'état sélectionné
+                unselectedIcon = Icons.Filled.Event // Icône événement pour l'état non sélectionné
             )
-            val AgendaTab = TabBarItem(
+            val agendaTab = TabBarItem(
                 title = "Agenda",
-                selectedIcon = Icons.Filled.Settings,
-                unselectedIcon = Icons.Outlined.Settings
+                selectedIcon = Icons.Filled.Checklist, // Icône liste pour l'état sélectionné
+                unselectedIcon = Icons.Filled.Checklist // Icône liste pour l'état non sélectionné
             )
-            val HistoryTab = TabBarItem(
+            val historyTab = TabBarItem(
                 title = "History",
-                selectedIcon = Icons.Filled.MoreVert,
-                unselectedIcon = Icons.Outlined.MoreVert
+                selectedIcon = Icons.Filled.History, // Icône historique pour l'état sélectionné
+                unselectedIcon = Icons.Filled.History // Icône historique pour l'état non sélectionné
             )
-            val tabBarItems = listOf(mainTab, eventsTab, AgendaTab, HistoryTab)
+
+            val tabBarItems = listOf(mainTab, eventsTab, agendaTab, historyTab)
 
             val navController = rememberNavController()
 
@@ -82,12 +79,11 @@ class MainActivity : ComponentActivity() {
                             composable(eventsTab.title) {
                                 EventScreen()
                             }
-                            composable(AgendaTab.title) {
-                                Text(AgendaTab.title)
+                            composable(agendaTab.title) {
+                                Text(agendaTab.title)
                             }
-                            composable(HistoryTab.title) {
-                                Text(HistoryTab.title)
-
+                            composable(historyTab.title) {
+                                Text(historyTab.title)
                             }
                         }
                     }
@@ -98,10 +94,13 @@ class MainActivity : ComponentActivity() {
 }
 
 
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     ISENSmartCompanionTheme {
-        MainScreen()
-    }
-}
+        MainScreen()}}
+
+

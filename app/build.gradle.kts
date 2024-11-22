@@ -39,6 +39,7 @@ android {
 
     buildFeatures {
         compose = true  // Activation de Jetpack Compose
+        buildConfig = true
     }
 }
 
@@ -56,6 +57,7 @@ dependencies {
     implementation(libs.androidx.material3)  // Composants Material3 pour Compose
 
 
+
     // Navigation Compose
     implementation(libs.androidx.navigation.runtime.ktx)
 
@@ -65,6 +67,16 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v275)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.gson)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.ui)
+    implementation(libs.material3)
+    implementation(libs.accessibility.test.framework)
+    implementation(libs.generativeai)
+    implementation(libs.androidx.material.icons.extended)
 
     // Dépendances de test
     testImplementation(libs.junit)  // JUnit pour les tests unitaires

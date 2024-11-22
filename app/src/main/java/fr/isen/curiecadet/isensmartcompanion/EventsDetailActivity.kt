@@ -22,17 +22,23 @@ class EventsDetailActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         // Récupérer les données de l'Intent
-        val eventName = intent.getStringExtra("EVENT_NAME") ?: "Nom de l'événement inconnu"
+        val eventName = intent.getStringExtra("EVENT_TITLE") ?: "Nom de l'événement inconnu"
         val eventDate = intent.getStringExtra("EVENT_DATE") ?: "Date inconnue"
         val eventDescription = intent.getStringExtra("EVENT_DESCRIPTION") ?: "Description inconnue"
+        val eventCategory = intent.getStringExtra("EVENT_CATEGORY") ?: "Categorie inconnue"
+        val eventid = intent.getStringExtra("EVENT_ID") ?: "Id inconnue"
+        val eventlocation = intent.getStringExtra("EVENT_LOCATION") ?: "location inconnue"
 
         setContent {
             ISENSmartCompanionTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     EventDetailScreen(
-                        eventName = eventName,
+                        eventtitle = eventName,
                         eventDate = eventDate,
                         eventDescription = eventDescription,
+                        eventCategory = eventCategory,
+                        eventid = eventid,
+                        eventlocation = eventlocation,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -43,14 +49,17 @@ class EventsDetailActivity : ComponentActivity() {
 
 @Composable
 fun EventDetailScreen(
-    eventName: String,
+    eventtitle: String,
     eventDate: String,
     eventDescription: String,
+    eventCategory: String,
+    eventid: String,
+    eventlocation: String,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         Text(
-            text = "Nom de l'événement: $eventName",
+            text = "Nom de l'événement: $eventtitle",
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
@@ -63,6 +72,21 @@ fun EventDetailScreen(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
+        Text(
+            text = "Categorie: $eventCategory",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "id: $eventid",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "Location: $eventlocation",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
     }
 }
 
@@ -71,9 +95,12 @@ fun EventDetailScreen(
 fun EventDetailScreenPreview() {
     ISENSmartCompanionTheme {
         EventDetailScreen(
-            eventName = "Soirée BDE",
+            eventtitle = "Soirée BDE",
             eventDate = "15 décembre 2024",
-            eventDescription = "Rejoignez-nous pour une soirée festive avec des jeux et de la musique."
+            eventDescription = "Rejoignez-nous pour une soirée festive avec des jeux et de la musique.",
+            eventCategory = "Soirée",
+            eventid = "Marseille",
+            eventlocation = "1"
         )
     }
 }

@@ -13,6 +13,17 @@ appcompat = "1.7.0"
 transportApi = "4.0.0"
 navigationRuntimeKtx = "2.8.4"
 navigationCompose = "2.8.4"
+retrofit = "2.11.0"
+converterGson = "2.11.0"
+gson = "2.11.0"
+recyclerview = "1.4.0-rc01"
+ui = "1.8.0-alpha06"
+material3 = "1.4.0-alpha04"
+accessibilityTestFramework = "4.1.1"
+generativeai = "0.9.0"
+client = "1.0.0"
+assistantEmbeddedClient = "0.1.0"
+materialIconsExtended = "1.7.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +45,17 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 transport-api = { group = "com.google.android.datatransport", name = "transport-api", version.ref = "transportApi" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converterGson" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+accessibility-test-framework = { group = "com.google.android.apps.common.testing.accessibility.framework", name = "accessibility-test-framework", version.ref = "accessibilityTestFramework" }
+generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
+client = { group = "com.google.ai", name = "client", version.ref = "client" }
+assistant-embedded-client = { group = "com.google.android.libraries.assistant", name = "assistant-embedded-client", version.ref = "assistantEmbeddedClient" }
+androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
