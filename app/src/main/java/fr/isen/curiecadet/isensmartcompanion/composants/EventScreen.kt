@@ -1,6 +1,13 @@
 package fr.isen.curiecadet.isensmartcompanion.composants
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,14 +36,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.isen.curiecadet.isensmartcompanion.API.RetrofitInstance
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import fr.isen.curiecadet.isensmartcompanion.EventsDetailActivity
+import fr.isen.curiecadet.isensmartcompanion.R
+import fr.isen.curiecadet.isensmartcompanion.api.PreferencesNotification
+import fr.isen.curiecadet.isensmartcompanion.api.RetrofitInstance
+import fr.isen.curiecadet.isensmartcompanion.api.cancelNotification
+import fr.isen.curiecadet.isensmartcompanion.api.scheduleNotification
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.Serializable
 
-// Nouvelle classe Event avec id comme String
 data class Event(
     val id: String,
     val title: String,
@@ -44,17 +62,14 @@ data class Event(
 @Composable
 fun EventScreen() {
     val context = LocalContext.current
-    var events by remember { mutableStateOf<List<Event>>(emptyList()) } // État pour stocker les événements
-    var isLoading by remember { mutableStateOf(true) } // Variable pour gérer l'état de chargement
-    var errorMessage by remember { mutableStateOf<String?>(null) } // Message d'erreur
+    var events by remember { mutableStateOf<List<Event>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // Charger les événements à partir de l'API
     LaunchedEffect(Unit) {
-        // Mettre l'état de chargement à true
         isLoading = true
         errorMessage = null
 
-        // Appel de la fonction fetchEvents
         fetchEvents(
             onSuccess = { fetchedEvents ->
                 events = fetchedEvents
@@ -72,9 +87,8 @@ fun EventScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Ajouter un titre centré en haut de l'écran
         Text(
-            text = "évènements",
+            text = "Événements",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
@@ -86,7 +100,6 @@ fun EventScreen() {
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
 
-        // Afficher un message d'erreur s'il y en a
         errorMessage?.let {
             Text(
                 text = it,
@@ -96,7 +109,6 @@ fun EventScreen() {
             )
         }
 
-        // Liste d'événements
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -105,7 +117,6 @@ fun EventScreen() {
         ) {
             items(events) { event ->
                 EventItem(event) {
-                    // Navigation vers l'écran de détails
                     val intent = Intent(context, EventsDetailActivity::class.java).apply {
                         putExtra("eventId", event.id)
                         putExtra("eventTitle", event.title)
@@ -119,43 +130,21 @@ fun EventScreen() {
             }
         }
 
-        // Affichage d'un indicateur de chargement si nécessaire
         if (isLoading) {
             Text(text = "Chargement en cours...", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
 
-// Fonction fetchEvents() pour effectuer l'appel API de manière asynchrone
-fun fetchEvents(
-    onSuccess: (List<Event>) -> Unit,
-    onFailure: (String) -> Unit
-) {
-    RetrofitInstance.API.getEvents().enqueue(object : Callback<List<Event>> {
-        override fun onResponse(call: Call<List<Event>>, response: Response<List<Event>>) {
-            if (response.isSuccessful) {
-                // Appeler onSuccess avec les événements récupérés
-                onSuccess(response.body() ?: emptyList())
-            } else {
-                // Appeler onFailure avec un message d'erreur
-                onFailure("Erreur de chargement des événements. Code: ${response.code()}")
-            }
-        }
-
-        override fun onFailure(call: Call<List<Event>>, t: Throwable) {
-            // Appeler onFailure en cas de problème réseau
-            onFailure("Erreur de réseau: ${t.localizedMessage}")
-        }
-    })
-}
-
 @Composable
 fun EventItem(event: Event, onClick: () -> Unit) {
+    val context = LocalContext.current
+    var isNotificationEnabled by remember { mutableStateOf(PreferencesNotification.get(context, event.id)) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
-
+            .clickable { onClick() }
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -180,16 +169,87 @@ fun EventItem(event: Event, onClick: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                 color = Color.DarkGray
             )
-            Text(
-                text = "Catégorie : ${event.category}",
-                style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
-                color = Color.DarkGray
-            )
-            Text(
-                text = event.description,
-                style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
-                maxLines = 2
-            )
+            IconButton(onClick = {
+                isNotificationEnabled = !isNotificationEnabled
+                PreferencesNotification.save(context, event.id, isNotificationEnabled)
+
+                if (isNotificationEnabled) {
+                    scheduleNotification(context, event)
+                    showNotification(context, event, true)
+                } else {
+                    cancelNotification(context, event.id)
+                    showNotification(context, event, false)
+                }
+            }) {
+                Icon(
+                    imageVector = if (isNotificationEnabled) Icons.Filled.Notifications else Icons.Filled.NotificationsOff,
+                    contentDescription = "Notification",
+                    tint = if (isNotificationEnabled) Color.Green else Color.Gray
+                )
+            }
         }
     }
+}
+
+fun showNotification(context: Context, event: Event, isEnabled: Boolean) {
+    // Vérifier si la permission d'envoyer des notifications est accordée
+    if (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        Toast.makeText(context, "Permission non accordée pour envoyer des notifications.", Toast.LENGTH_LONG).show()
+        return
+    }
+
+    val channelId = "default_channel"
+    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    // Configurer le canal de notification si nécessaire (Android O et versions ultérieures)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            channelId,
+            "Notifications d'événements",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Canal pour les notifications d'événements"
+        }
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    val notificationTitle = if (isEnabled) "Notification activée" else "Notification désactivée"
+    val notificationMessage = "La notification pour l'événement '${event.title}' a été ${if (isEnabled) "activée" else "désactivée"}."
+
+    val notification = NotificationCompat.Builder(context, channelId)
+        .setSmallIcon(R.drawable.ic_launcher_foreground) // Remplacez par une icône appropriée
+        .setContentTitle(notificationTitle)
+        .setContentText(notificationMessage)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setAutoCancel(true)
+        .build()
+
+    // Envoyer la notification
+    NotificationManagerCompat.from(context).notify(event.id.hashCode(), notification)
+
+    // Afficher un message à l'utilisateur
+    Toast.makeText(context, notificationMessage, Toast.LENGTH_SHORT).show()
+}
+
+fun fetchEvents(
+    onSuccess: (List<Event>) -> Unit,
+    onFailure: (String) -> Unit
+) {
+    RetrofitInstance.API.getEvents().enqueue(object : Callback<List<Event>> {
+        override fun onResponse(call: Call<List<Event>>, response: Response<List<Event>>) {
+            if (response.isSuccessful) {
+                onSuccess(response.body() ?: emptyList())
+            } else {
+                onFailure("Erreur de chargement des événements. Code: ${response.code()}")
+            }
+        }
+
+        override fun onFailure(call: Call<List<Event>>, t: Throwable) {
+            onFailure("Erreur de réseau: ${t.localizedMessage}")
+        }
+    })
 }

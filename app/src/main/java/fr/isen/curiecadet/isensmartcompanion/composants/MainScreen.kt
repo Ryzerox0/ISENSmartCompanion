@@ -1,178 +1,149 @@
 package fr.isen.curiecadet.isensmartcompanion.composants
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import fr.isen.curiecadet.isensmartcompanion.R
+import fr.isen.curiecadet.isensmartcompanion.api.AppDatabase
+import fr.isen.curiecadet.isensmartcompanion.api.Interaction
 import fr.isen.curiecadet.isensmartcompanion.ia.generateText
 import kotlinx.coroutines.launch
 
+@SuppressLint("SimpleDateFormat")
 @Composable
 fun MainScreen() {
     var userInput by remember { mutableStateOf("") } // Stocke la question posée par l'utilisateur
-    val questionsAndResponses = remember { mutableStateListOf<Pair<String, String>>() } // Historique
-    val context = LocalContext.current // Contexte nécessaire pour afficher un Toast
-    val coroutineScope = rememberCoroutineScope() // Pour exécuter des tâches suspendues
+    val context = LocalContext.current
+    val db = AppDatabase.getDatabase(context) // Accéder à la base de données
+    val interactionDao = db.interactionDao()
+    val questionsAndResponses = remember { mutableStateListOf<Interaction>() } // Historique des interactions
+
+    // Utilisation de rememberCoroutineScope pour accéder à un CoroutineScope
+    val coroutineScope = rememberCoroutineScope()
+
+    // Charger l'historique des interactions
+    LaunchedEffect(Unit) {
+        questionsAndResponses.clear()
+        questionsAndResponses.addAll(interactionDao.getAllInteractions()) // Charger l'historique
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
             .padding(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(30.dp))
-
+        // Image en haut avec le nom "Isen"
+        val isenImage: Painter = painterResource(id = R.drawable.isen) // Assurez-vous que l'image isen est dans le dossier res/drawable
         Image(
-            painter = painterResource(id = R.drawable.isen),
-            contentDescription = "Description de l'image",
+            painter = isenImage,
+            contentDescription = "Isen",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            alignment = Alignment.Center
+                .height(200.dp) // Taille de l'image en haut
+                .padding(bottom = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Box(
+        // Affichage de l'historique des interactions
+        Column(
             modifier = Modifier
-                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .weight(1f) // Prendre tout l'espace disponible au-dessus de la zone de texte et du bouton
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (questionsAndResponses.isNotEmpty()) {
-                    for ((question, response) in questionsAndResponses) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        Color(0xFFE0E0E0),
-                                        shape = MaterialTheme.shapes.medium
-                                    )
-                                    .padding(8.dp)
-                                    .widthIn(min = 120.dp)
-                            ) {
-                                Text(
-                                    text = question,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
-                                )
-                            }
-                        }
+            questionsAndResponses.forEach { interaction ->
+                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                    // Affichage de la date au-dessus des questions/réponses
+                    Text(
+                        text = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(java.util.Date(interaction.timestamp)),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        Color(0xFFB0E0A8),
-                                        shape = MaterialTheme.shapes.medium
-                                    )
-                                    .padding(8.dp)
-                                    .widthIn(min = 120.dp)
-                            ) {
-                                Text(
-                                    text = response,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Black
-                                )
-                            }
-                        }
+                    // Bulle pour la question
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .background(Color.LightGray, shape = MaterialTheme.shapes.medium)
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Question: ${interaction.question}")
+                    }
+
+                    // Bulle pour la réponse
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .background(Color(0xFFDCF8C6), shape = MaterialTheme.shapes.medium) // Couleur typique pour les bulles de réponse
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Réponse: ${interaction.response}")
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
+        // Zone de texte pour entrer une question et bouton pour envoyer la question
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 100.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+                .align(Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(16.dp) // Espacement entre le TextField et le Button
         ) {
+            // Zone de texte pour entrer une question
             TextField(
                 value = userInput,
                 onValueChange = { userInput = it },
                 label = { Text("Posez une question ?") },
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 6.dp)
+                    .weight(1f) // Laisser le TextField prendre tout l'espace disponible
             )
 
+            // Bouton pour envoyer la question et générer une réponse
             Button(
                 onClick = {
                     if (userInput.isNotBlank()) {
+                        // Générer la réponse
                         coroutineScope.launch {
                             try {
-                                val geminiResponse = generateText(userInput)
-                                questionsAndResponses.add(
-                                    Pair("Question : $userInput", "Réponse : $geminiResponse")
+                                val response = generateText(userInput)
+                                val interaction = Interaction(
+                                    question = userInput,
+                                    response = response
                                 )
+                                // Sauvegarder dans la base de données
+                                interactionDao.insert(interaction)
+                                questionsAndResponses.add(0, interaction) // Ajouter à l'historique en tête
+                                userInput = "" // Réinitialiser le champ de texte
                             } catch (e: Exception) {
                                 Toast.makeText(context, "Erreur : ${e.message}", Toast.LENGTH_SHORT).show()
-                            } finally {
-                                userInput = ""
                             }
                         }
                     } else {
-                        Toast.makeText(context, "Veuillez entrer une question.", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, "Veuillez entrer une question.", Toast.LENGTH_SHORT).show()
                     }
                 },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,  // Changer la couleur du bouton en rouge
-                    contentColor = Color.White  // Texte du bouton en blanc
-                ),
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.CenterVertically).padding(bottom = 100.dp)
             ) {
-                Text(
-                    text = "Envoyer"
-                )
+                Text("Envoyer")
             }
         }
+
+        // Ajouter un espace pour que les éléments ne se touchent pas
+        Spacer(modifier = Modifier.height(16.dp)) // Ajouter un peu d'espace sous le bouton
     }
 }
-

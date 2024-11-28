@@ -1,6 +1,10 @@
 package fr.isen.curiecadet.isensmartcompanion
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import fr.isen.curiecadet.isensmartcompanion.composants.EventScreen
+import fr.isen.curiecadet.isensmartcompanion.composants.HistoryScreen
 import fr.isen.curiecadet.isensmartcompanion.composants.MainScreen
 import fr.isen.curiecadet.isensmartcompanion.composants.TabView
 import fr.isen.curiecadet.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
@@ -36,30 +41,31 @@ data class TabBarItem(
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 
-            // Utilisation des icônes intégrées de Jetpack Compose
+
             val mainTab = TabBarItem(
                 title = "main",
-                selectedIcon = Icons.Filled.Home, // Icône maison pour l'état sélectionné
-                unselectedIcon = Icons.Filled.Home // Icône maison pour l'état non sélectionné
+                selectedIcon = Icons.Filled.Home,
+                unselectedIcon = Icons.Filled.Home
             )
             val eventsTab = TabBarItem(
                 title = "events",
-                selectedIcon = Icons.Filled.Event, // Icône événement pour l'état sélectionné
-                unselectedIcon = Icons.Filled.Event // Icône événement pour l'état non sélectionné
+                selectedIcon = Icons.Filled.Event,
+                unselectedIcon = Icons.Filled.Event
             )
             val agendaTab = TabBarItem(
                 title = "Agenda",
-                selectedIcon = Icons.Filled.Checklist, // Icône liste pour l'état sélectionné
-                unselectedIcon = Icons.Filled.Checklist // Icône liste pour l'état non sélectionné
+                selectedIcon = Icons.Filled.Checklist,
+                unselectedIcon = Icons.Filled.Checklist
             )
             val historyTab = TabBarItem(
                 title = "History",
-                selectedIcon = Icons.Filled.History, // Icône historique pour l'état sélectionné
-                unselectedIcon = Icons.Filled.History // Icône historique pour l'état non sélectionné
+                selectedIcon = Icons.Filled.History,
+                unselectedIcon = Icons.Filled.History
             )
 
             val tabBarItems = listOf(mainTab, eventsTab, agendaTab, historyTab)
@@ -83,15 +89,38 @@ class MainActivity : ComponentActivity() {
                                 Text(agendaTab.title)
                             }
                             composable(historyTab.title) {
-                                Text(historyTab.title)
+                                HistoryScreen()
                             }
                         }
                     }
                 }
             }
         }
+        createNotificationChannel(this)
     }
 }
+
+
+
+
+// Fonction pour créer un canal de notification
+fun createNotificationChannel(context: Context) {
+    // Vérification de la version d'Android (nécessaire pour les canaux de notification)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            "event_channel", // ID du canal
+            "Événements", // Nom affiché à l'utilisateur
+            NotificationManager.IMPORTANCE_DEFAULT // Niveau d'importance du canal
+        ).apply {
+            description = "Notifications pour les événements abonnés"
+        }
+
+        // Création ou récupération du gestionnaire de notifications
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.createNotificationChannel(channel)
+    }
+}
+
 
 
 

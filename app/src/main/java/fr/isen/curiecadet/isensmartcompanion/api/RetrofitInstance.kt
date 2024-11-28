@@ -1,4 +1,4 @@
-package fr.isen.curiecadet.isensmartcompanion.API
+package fr.isen.curiecadet.isensmartcompanion.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,4 +14,3 @@ object RetrofitInstance {
             .create(APIService::class.java)
     }
 }
-

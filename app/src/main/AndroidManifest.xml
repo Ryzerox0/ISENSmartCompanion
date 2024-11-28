@@ -2,10 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissions nécessaires pour l'Internet et les alarmes -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -15,13 +18,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ISENSmartCompanion"
-        tools:targetApi="31">
-        <activity
-            android:name=".EventsDetailActivity"
-            android:exported="false"
-            android:label="@string/title_activity_events_detail"
-            android:theme="@style/Theme.ISENSmartCompanion" />
+        android:theme="@style/Theme.ISENSmartCompanion">
+
+        <!-- Activité principale -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,10 +28,17 @@
             android:theme="@style/Theme.ISENSmartCompanion">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Activité de détail de l'événement -->
+        <activity
+            android:name=".EventsDetailActivity"
+            android:exported="false"
+            android:label="@string/title_activity_events_detail"
+            android:theme="@style/Theme.ISENSmartCompanion" />
+
     </application>
 
 </manifest>
