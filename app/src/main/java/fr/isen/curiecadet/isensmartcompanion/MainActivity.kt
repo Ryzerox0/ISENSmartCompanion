@@ -1,5 +1,6 @@
 package fr.isen.curiecadet.isensmartcompanion
 
+import AgendaScreen
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -17,7 +18,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,7 +31,6 @@ import fr.isen.curiecadet.isensmartcompanion.composants.MainScreen
 import fr.isen.curiecadet.isensmartcompanion.composants.TabView
 import fr.isen.curiecadet.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 
-
 data class TabBarItem(
     val title: String,
     val selectedIcon: ImageVector,
@@ -41,12 +40,9 @@ data class TabBarItem(
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-
             val mainTab = TabBarItem(
                 title = "main",
                 selectedIcon = Icons.Filled.Home,
@@ -86,7 +82,7 @@ class MainActivity : ComponentActivity() {
                                 EventScreen()
                             }
                             composable(agendaTab.title) {
-                                Text(agendaTab.title)
+                                AgendaScreen()
                             }
                             composable(historyTab.title) {
                                 HistoryScreen()
@@ -100,36 +96,24 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-
-
-// Fonction pour créer un canal de notification
 fun createNotificationChannel(context: Context) {
-    // Vérification de la version d'Android (nécessaire pour les canaux de notification)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
-            "event_channel", // ID du canal
-            "Événements", // Nom affiché à l'utilisateur
-            NotificationManager.IMPORTANCE_DEFAULT // Niveau d'importance du canal
+            "event_channel",
+            "Événements",
+            NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
             description = "Notifications pour les événements abonnés"
         }
-
-        // Création ou récupération du gestionnaire de notifications
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         notificationManager?.createNotificationChannel(channel)
     }
 }
 
-
-
-
-
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     ISENSmartCompanionTheme {
-        MainScreen()}}
-
-
+        MainScreen()
+    }
+}

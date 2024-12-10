@@ -55,11 +55,14 @@ dependencies {
 
 
 
+
     // Room Runtime (Déclaration correcte)
     implementation(libs.androidx.room.runtime)
 
     // Room KTX (Extensions Kotlin pour Room)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.ui)
 
     kapt(libs.room.compiler)
 

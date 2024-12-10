@@ -9,27 +9,14 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsOff
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -49,6 +36,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.Serializable
+
+
+
 
 data class Event(
     val id: String,
@@ -169,6 +159,7 @@ fun EventItem(event: Event, onClick: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                 color = Color.DarkGray
             )
+
             IconButton(onClick = {
                 isNotificationEnabled = !isNotificationEnabled
                 PreferencesNotification.save(context, event.id, isNotificationEnabled)
@@ -192,7 +183,6 @@ fun EventItem(event: Event, onClick: () -> Unit) {
 }
 
 fun showNotification(context: Context, event: Event, isEnabled: Boolean) {
-    // Vérifier si la permission d'envoyer des notifications est accordée
     if (ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.POST_NOTIFICATIONS
@@ -228,10 +218,8 @@ fun showNotification(context: Context, event: Event, isEnabled: Boolean) {
         .setAutoCancel(true)
         .build()
 
-    // Envoyer la notification
     NotificationManagerCompat.from(context).notify(event.id.hashCode(), notification)
 
-    // Afficher un message à l'utilisateur
     Toast.makeText(context, notificationMessage, Toast.LENGTH_SHORT).show()
 }
 
