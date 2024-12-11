@@ -195,7 +195,7 @@ fun showNotification(context: Context, event: Event, isEnabled: Boolean) {
     val channelId = "default_channel"
     val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    // Configurer le canal de notification si nécessaire (Android O et versions ultérieures)
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
             channelId,
@@ -211,7 +211,7 @@ fun showNotification(context: Context, event: Event, isEnabled: Boolean) {
     val notificationMessage = "La notification pour l'événement '${event.title}' a été ${if (isEnabled) "activée" else "désactivée"}."
 
     val notification = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(R.drawable.ic_launcher_foreground) // Remplacez par une icône appropriée
+        .setSmallIcon(R.drawable.ic_launcher_foreground)
         .setContentTitle(notificationTitle)
         .setContentText(notificationMessage)
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)

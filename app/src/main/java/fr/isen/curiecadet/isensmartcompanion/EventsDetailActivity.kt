@@ -21,7 +21,7 @@ class EventsDetailActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Récupérer les données de l'Intent
+
         val eventName = intent.getStringExtra("EVENT_TITLE") ?: "Nom de l'événement inconnu"
         val eventDate = intent.getStringExtra("EVENT_DATE") ?: "Date inconnue"
         val eventDescription = intent.getStringExtra("EVENT_DESCRIPTION") ?: "Description inconnue"

@@ -1,6 +1,5 @@
 package fr.isen.curiecadet.isensmartcompanion
 
-import AgendaScreen
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Checklist
@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import fr.isen.curiecadet.isensmartcompanion.composants.AgendaScreen
 import fr.isen.curiecadet.isensmartcompanion.composants.EventScreen
 import fr.isen.curiecadet.isensmartcompanion.composants.HistoryScreen
 import fr.isen.curiecadet.isensmartcompanion.composants.MainScreen
@@ -39,7 +40,7 @@ data class TabBarItem(
 )
 
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

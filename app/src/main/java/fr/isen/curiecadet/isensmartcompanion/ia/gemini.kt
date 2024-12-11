@@ -22,11 +22,11 @@ val model = GenerativeModel(
         SafetySetting(HarmCategory.DANGEROUS_CONTENT, BlockThreshold.MEDIUM_AND_ABOVE),
     )
 )
-// Fonction pour générer une réponse à partir d'un prompt
+
 suspend fun generateText(prompt: String): String {
     return try {
-        // Appel à une méthode de génération sur l'objet 'model'
-        val result = model.generateContent(prompt)  // Assurez-vous d'avoir une méthode valide pour la génération de texte
+
+        val result = model.generateContent(prompt)
         result.text ?: "Aucune réponse générée"
     } catch (e: Exception) {
         "Erreur : ${e.message}"
